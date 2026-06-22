@@ -72,7 +72,7 @@ func (p Provider) Query(ctx context.Context, query string) (float64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("datadog: query: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode >= 300 {
 		return 0, fmt.Errorf("datadog: status %d", resp.StatusCode)
 	}

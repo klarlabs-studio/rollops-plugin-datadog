@@ -17,7 +17,7 @@ func TestQuery_ReturnsLatestPoint(t *testing.T) {
 		gotQuery = r.URL.Query().Get("query")
 		gotAPI = r.Header.Get("DD-API-KEY")
 		gotApp = r.Header.Get("DD-APPLICATION-KEY")
-		w.Write([]byte(`{"series":[{"pointlist":[[1700000000000,0.01],[1700000060000,0.04]]}]}`))
+		_, _ = w.Write([]byte(`{"series":[{"pointlist":[[1700000000000,0.01],[1700000060000,0.04]]}]}`))
 	}))
 	defer srv.Close()
 
@@ -39,7 +39,7 @@ func TestQuery_ReturnsLatestPoint(t *testing.T) {
 
 func TestQuery_NoData(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(`{"series":[]}`))
+		_, _ = w.Write([]byte(`{"series":[]}`))
 	}))
 	defer srv.Close()
 	p := Provider{BaseURL: srv.URL, APIKey: "k", AppKey: "a", HTTP: srv.Client(), now: fixedClock}
@@ -50,7 +50,7 @@ func TestQuery_NoData(t *testing.T) {
 
 func TestQuery_DatadogError(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(`{"error":"bad query"}`))
+		_, _ = w.Write([]byte(`{"error":"bad query"}`))
 	}))
 	defer srv.Close()
 	p := Provider{BaseURL: srv.URL, APIKey: "k", AppKey: "a", HTTP: srv.Client(), now: fixedClock}
@@ -69,7 +69,7 @@ func TestQuery_WindowInRequest(t *testing.T) {
 	var from, to string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		from, to = r.URL.Query().Get("from"), r.URL.Query().Get("to")
-		w.Write([]byte(`{"series":[{"pointlist":[[1,1.0]]}]}`))
+		_, _ = w.Write([]byte(`{"series":[{"pointlist":[[1,1.0]]}]}`))
 	}))
 	defer srv.Close()
 	p := Provider{BaseURL: srv.URL, APIKey: "k", AppKey: "a", Window: 10 * time.Minute, HTTP: srv.Client(), now: fixedClock}
