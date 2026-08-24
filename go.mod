@@ -2,6 +2,8 @@ module github.com/klarlabs-studio/rollops-plugin-datadog
 
 go 1.26.3
 
+toolchain go1.26.7
+
 require go.klarlabs.de/rollops v0.12.0
 
 require (
